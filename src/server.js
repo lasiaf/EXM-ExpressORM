@@ -81,6 +81,30 @@ app.get("/users/:id", async (req, res) => {
   }
 });
 
+app.get("/user", async (req, res) => {
+  try {
+    const { search } = req.query;
+
+    const users = await prisma.user.findMany({
+      where: search
+        ? {
+            name: {
+              contains: search,
+            },
+          }
+        : undefined,
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      message: "Gagal mengambil data user",
+    });
+  }
+});
+
 app.put("/users/:id", async (req, res) => {
   try {
     const id = Number(req.params.id);
